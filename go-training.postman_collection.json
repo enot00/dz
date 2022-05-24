@@ -1,0 +1,109 @@
+{
+	"info": {
+		"_postman_id": "737bb64b-f13c-496f-b6d6-cb0b72ebcf23",
+		"name": "go-training",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20984817"
+	},
+	"item": [
+		{
+			"name": "/ping",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/ping",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"ping"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "find all events",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/v1/events",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"v1",
+						"events"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "find one event",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/v1/events/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"v1",
+						"events",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create event",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/v1/events/create?master={value}&title={value}&descrip={value}&price={value}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"v1",
+						"events",
+						"create"
+					],
+					"query": [
+						{
+							"key": "master",
+							"value": "{value}"
+						},
+						{
+							"key": "title",
+							"value": "{value}"
+						},
+						{
+							"key": "descrip",
+							"value": "{value}"
+						},
+						{
+							"key": "price",
+							"value": "{value}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

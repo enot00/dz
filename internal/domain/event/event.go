@@ -1,6 +1,9 @@
 package event
 
 type Event struct {
-	Id   int64
-	Name string
+	Id      uint   `db:"id,omitempty"`
+	Master  string `db:"master"`
+	Title   string `db:"title"`
+	Descrip string `db:"description"`
+	Price   int    `db:"price"`
 }

@@ -65,3 +65,24 @@ func (c *EventController) FindOne() http.HandlerFunc {
 		}
 	}
 }
+
+//роутер вызывает эту функцию
+func (c *EventController) Create() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == "POST" {
+			event, err := (*c.service).Create(r.URL.Query()) //вызываем в сервисе
+			if err != nil {
+				fmt.Printf("EventController.Create(): %s", err)
+				err = internalServerError(w, err)
+				if err != nil {
+					fmt.Printf("EventController.Create(): %s", err)
+				}
+				return
+			}
+			err = success(w, event)
+			if err != nil {
+				fmt.Printf("EventController.Create(): %s", err)
+			}
+		}
+	}
+}
