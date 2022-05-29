@@ -2,7 +2,6 @@ package event
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/upper/db/v4/adapter/postgresql"
 )
@@ -19,6 +18,8 @@ type Repository interface {
 	FindAll() ([]Event, error)
 	FindOne(id int64) (*Event, error)
 	Create(events Event) (*Event, error)
+	Update(id int64, event Event) (*Event, error)
+	Delete(id int64) (*Event, error)
 }
 
 type repository struct {
@@ -32,19 +33,16 @@ func NewRepository() Repository {
 func (r *repository) FindAll() ([]Event, error) {
 	sess, err := postgresql.Open(settings)
 	if err != nil {
-		log.Fatal("Open: ", err)
+		fmt.Printf("Open: %s", err)
+		return nil, err
 	}
 	defer sess.Close()
 	fmt.Printf("Connected to %q with DSN:\n\t%q\n", sess.Name(), settings)
 
-	eventsTable := sess.Collection("events")
 	var events []Event
-	err = eventsTable.Find().All(&events)
+	err = sess.Collection("events").Find().All(&events)
 	if err != nil {
-		log.Fatal("eventsTable.Find: ", err)
-	}
-	for i := range events {
-		fmt.Printf("record #%d: %#v\n", i, events[i])
+		fmt.Printf("Find All: %s", err)
 	}
 	return events, nil
 }
@@ -52,31 +50,81 @@ func (r *repository) FindAll() ([]Event, error) {
 func (r *repository) FindOne(id int64) (*Event, error) {
 	sess, err := postgresql.Open(settings)
 	if err != nil {
-		log.Fatal("Open: ", err)
+		fmt.Printf("Open: %s", err)
+		return nil, err
 	}
 	defer sess.Close()
 	fmt.Printf("Connected to %q with DSN:\n\t%q\n", sess.Name(), settings)
-
-	eventsTable := sess.Collection("events")
 	var event Event
-	res := eventsTable.Find(id)
-	err = res.One(&event)
+	err = sess.Collection("events").Find(id).One(&event)
 	if err != nil {
-		log.Fatal("eventsTable.Find: ", err)
+		fmt.Printf("Find one: %s", err)
 	}
 	return &event, nil
 }
-func (r *repository) Create(events Event) (*Event, error) {
+func (r *repository) Create(event Event) (*Event, error) {
 	sess, err := postgresql.Open(settings)
 	if err != nil {
-		log.Fatal("Open: ", err)
+		fmt.Printf("Open: %s", err)
+		return nil, err
 	}
 	defer sess.Close()
 	fmt.Printf("Connected to %q with DSN:\n\t%q\n", sess.Name(), settings)
 
-	_, err = sess.SQL().InsertInto("events").Values(&events).Exec()
+	col := sess.Collection("events")
+
+	res_id, err := col.Insert(&event)
+	//справедливости ради в lesson7 мы не использовали Insert только InsertInto
 	if err != nil {
-		log.Fatal("eventsTable.Create: ", err)
+		fmt.Printf("Create: %s", err)
 	}
-	return &events, nil
+	var res Event
+	err = col.Find(res_id).One(&res) //возращаем записанный евент с базы
+	if err != nil {
+		fmt.Printf("Create return: %s", err)
+	}
+	//возмоно правильно возращать db.InsertResult??
+	return &res, nil
+}
+
+func (r *repository) Update(id int64, event Event) (*Event, error) {
+	sess, err := postgresql.Open(settings)
+	if err != nil {
+		fmt.Printf("Open: %s", err)
+	}
+	defer sess.Close()
+	fmt.Printf("Connected to %q with DSN:\n\t%q\n", sess.Name(), settings)
+
+	col := sess.Collection("events")
+	err = col.Find(id).Update(event)
+	if err != nil {
+		fmt.Printf("Update: %s", err)
+	}
+	var res Event
+	err = col.Find(id).One(&res) //возращаем обновленный евент с базы
+	if err != nil {
+		fmt.Printf("Update return: %s", err)
+	}
+	return &res, nil
+}
+
+func (r *repository) Delete(id int64) (*Event, error) {
+	sess, err := postgresql.Open(settings)
+	if err != nil {
+		fmt.Printf("Open: %s", err)
+	}
+	defer sess.Close()
+	fmt.Printf("Connected to %q with DSN:\n\t%q\n", sess.Name(), settings)
+
+	col := sess.Collection("events")
+	var res Event
+	err = col.Find(id).One(&res) //возращаем евент который мы удалили для вывода отчета или отмене(повторного Create())
+	if err != nil {
+		fmt.Printf("Delete return: %s", err)
+	}
+	err = col.Find(id).Delete()
+	if err != nil {
+		fmt.Printf("Delete: %s", err)
+	}
+	return &res, nil
 }

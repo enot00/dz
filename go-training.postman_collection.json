@@ -51,7 +51,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8081/v1/events/1",
+					"raw": "http://localhost:8081/v1/events/2",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -60,7 +60,7 @@
 					"path": [
 						"v1",
 						"events",
-						"1"
+						"2"
 					]
 				}
 			},
@@ -71,8 +71,17 @@
 			"request": {
 				"method": "POST",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"Master\":\"test_json\",\"Title\":\"test_json\",\"Descrip\":\"test_json\",\"Price\":0}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
-					"raw": "http://localhost:8081/v1/events/create?master={value}&title={value}&descrip={value}&price={value}",
+					"raw": "http://localhost:8081/v1/events/create",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -82,24 +91,62 @@
 						"v1",
 						"events",
 						"create"
-					],
-					"query": [
-						{
-							"key": "master",
-							"value": "{value}"
-						},
-						{
-							"key": "title",
-							"value": "{value}"
-						},
-						{
-							"key": "descrip",
-							"value": "{value}"
-						},
-						{
-							"key": "price",
-							"value": "{value}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"Master\":\"test_json_update\",\"Title\":\"test_json_update\",\"Descrip\":\"test_json_update\",\"Price\":0}",
+					"options": {
+						"raw": {
+							"language": "json"
 						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/v1/events/update/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"v1",
+						"events",
+						"update",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/v1/events/delete/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"v1",
+						"events",
+						"delete",
+						"1"
 					]
 				}
 			},

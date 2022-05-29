@@ -1,15 +1,16 @@
 package event
 
 import (
+	"encoding/json"
 	"fmt"
-	"net/url"
-	"strconv"
 )
 
 type Service interface {
 	FindAll() ([]Event, error)
 	FindOne(id int64) (*Event, error)
-	Create(params url.Values) (*Event, error)
+	Create(body []byte) (*Event, error)
+	Update(id int64, body []byte) (*Event, error)
+	Delete(id int64) (*Event, error)
 }
 
 type service struct {
@@ -30,16 +31,24 @@ func (s *service) FindOne(id int64) (*Event, error) {
 	return (*s.repo).FindOne(id)
 }
 
-func (s *service) Create(params url.Values) (*Event, error) {
-	parse_price, err := strconv.Atoi(params["price"][0])
+func (s *service) Create(body []byte) (*Event, error) {
+	var event Event
+	err := json.Unmarshal(body, &event)
 	if err != nil {
-		fmt.Printf("ParseFail.Create(): %s", err)
-	}
-	event := Event{
-		Master:  params["master"][0],
-		Title:   params["title"][0],
-		Descrip: params["descrip"][0],
-		Price:   parse_price,
+		fmt.Printf("JSON create: %s", err)
 	}
 	return (*s.repo).Create(event) //вызываем в репозитории
+}
+
+func (s *service) Update(id int64, body []byte) (*Event, error) {
+	var event Event
+	err := json.Unmarshal(body, &event)
+	if err != nil {
+		fmt.Printf("JSON update: %s", err)
+	}
+	return (*s.repo).Update(id, event)
+}
+
+func (s *service) Delete(id int64) (*Event, error) {
+	return (*s.repo).Delete(id)
 }
